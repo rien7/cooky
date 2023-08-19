@@ -29,11 +29,12 @@ const SearchPage = () => {
 
 const Dot = (props: {number: number, stepAtom: PrimitiveAtom<number>}) => {
   const [step, setStep] = useAtom(props.stepAtom)
+  const clickAble = props.number === 0 || step + 1 === props.number
   return (
-    <div className='group p-2 bg-white cursor-pointer' onClick={() => setStep(props.number)}>
+    <div className={`${clickAble ? 'cursor-pointer group p-2 bg-white' : 'group p-2 bg-white'}`} onClick={() => clickAble && setStep(props.number)}>
       <div className={`${props.number === step ? 'w-3 h-3 bg-blue-400' : 
-      'w-2 h-2 bg-gray-300 outline-gray-300 group-hover:outline group-hover:outline-2 group-hover:outline-offset-2'} 
-      rounded-full transition-all`}></div>
+      (clickAble ? 'group-hover:outline group-hover:outline-2 group-hover:outline-offset-2 w-2 h-2 bg-gray-300 outline-gray-300' : 'w-2 h-2 bg-gray-300 outline-gray-300')} 
+      rounded-full transition-all`} />
     </div>
   )
 }
