@@ -5,6 +5,7 @@ import SelectText from './components/SelectText';
 
 const stepAtom = atom(0)
 const sentenceAtom = atom("")
+const selectionAtom = atom<{s: number, e: number}[]>([])
 
 const SearchPage = () => {
   const step = useAtomValue(stepAtom);
@@ -13,7 +14,7 @@ const SearchPage = () => {
       <div className='flex flex-col h-screen justify-center items-center'>
         <div className='mx-10 w-[80%]'>
           {step === 0 && <SentenceInput stepAtom={stepAtom} sentenceAtom={sentenceAtom} />}
-          {step === 1 && <SelectText stepAtom={stepAtom} sentenceAtom={sentenceAtom} />}
+          {step === 1 && <SelectText stepAtom={stepAtom} sentenceAtom={sentenceAtom} selectionAtom={selectionAtom}/>}
         </div>
       </div>
       <div className='absolute w-48 bottom-32 left-[50%] translate-x-[-50%]'>
