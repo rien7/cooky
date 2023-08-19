@@ -1,9 +1,9 @@
 import './index.css'
-import SentenceInput from "./components/SentenceInput"
+import SearchPage from './SearchPage'
 
 function App() {
   return (
-    <SentenceInput />      
+    <SearchPage />      
   )
 }
 
