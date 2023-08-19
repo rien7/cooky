@@ -1,5 +1,5 @@
-import { PrimitiveAtom, useSetAtom, useAtomValue } from 'jotai'
-import { useRef, useState } from 'react'
+import { PrimitiveAtom, useSetAtom, useAtomValue, useAtom } from 'jotai'
+import { useRef } from 'react'
 
 function renderSelection(selections: { s: number, e: number }[], text: string) {
   const result: { class?: string, text: string }[] = []
@@ -16,11 +16,11 @@ function renderSelection(selections: { s: number, e: number }[], text: string) {
 
 // TODO: support phrase selection
 // TODO: remove space and other symbols
-const SelectText = (props: { stepAtom: PrimitiveAtom<number>, sentenceAtom: PrimitiveAtom<string> }) => {
+const SelectText = (props: { stepAtom: PrimitiveAtom<number>, sentenceAtom: PrimitiveAtom<string>, selectionAtom: PrimitiveAtom<{s: number, e: number}[]> }) => {
   const ref = useRef<HTMLParagraphElement>(null)
   const sentence = useAtomValue(props.sentenceAtom)
   const updateStep = useSetAtom(props.stepAtom)
-  const [selections, updateSelections] = useState<{ s: number, e: number }[]>([])
+  const [selections, updateSelections] = useAtom(props.selectionAtom)
 
   // get children nodes offset
   function getOffset() {
