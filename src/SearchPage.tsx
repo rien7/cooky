@@ -1,8 +1,9 @@
-import { atom, useAtomValue } from 'jotai'
+import { atom, useAtomValue, useSetAtom } from 'jotai'
 import SentenceInput from './components/SentenceInput';
 import { PrimitiveAtom, useAtom } from 'jotai'
 import SelectText from './components/SelectText';
 import useDelayUnmount from './utils/delayUnmount';
+import { useEffect } from 'react';
 
 const stepAtom = atom(0)
 const sentenceAtom = atom("")
@@ -12,6 +13,12 @@ const SearchPage = () => {
   const step = useAtomValue(stepAtom);
   const step1Render = useDelayUnmount(step === 0, 500)
   const step2Render = useDelayUnmount(step === 1, 500)
+  const sentence = useAtomValue(sentenceAtom)
+  const updateSelectionAtom = useSetAtom(selectionAtom)
+
+  useEffect(() => {
+    updateSelectionAtom([])
+  }, [sentence, updateSelectionAtom])
 
   return (
     <>

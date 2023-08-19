@@ -23,7 +23,7 @@ const SentenceInput = (props: { stepAtom: PrimitiveAtom<number>, sentenceAtom: P
 
   return (
     <>
-      <label className={`group absolute w-full block overflow-hidden bg-transparent transition ${step === 0 ? 'z-10' : 'z-20'}`}>
+      <label className={`group absolute w-full block overflow-hidden bg-transparent transition ${step === 0 ? 'z-10' : 'z-20'} -translate-y-[50%]`}>
         <textarea ref={ref} className={` block scroll-smooth overscroll-none resize-none h-[1.75rem] w-full border-none placeholder-silver transition duration-500 ${step === 0 ? 'text-primary opacity-100' : 'text-gray-400 opacity-0'} \
         bg-transparent p-0 focus:border-transparent focus:outline-none focus:ring-0 text-xl font-medium font-serif`}
           placeholder={placeholder} onChange={handleChange} defaultValue={sentence}/>
