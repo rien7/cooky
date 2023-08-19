@@ -1,4 +1,4 @@
-import { PrimitiveAtom, useSetAtom, useAtomValue, useAtom } from 'jotai'
+import { PrimitiveAtom, useAtomValue, useAtom } from 'jotai'
 import { useRef } from 'react'
 
 function renderSelection(selections: { s: number, e: number }[], text: string) {
@@ -7,7 +7,7 @@ function renderSelection(selections: { s: number, e: number }[], text: string) {
   selections.sort((a, b) => a.s - b.s)
   for (const selection of selections) {
     result.push({ text: text.slice(last, selection.s) })
-    result.push({ class: 'text-red-500 underline decoration-wavy cursor-pointer', text: text.slice(selection.s, selection.e) })
+    result.push({ class: 'text-orange-400 cursor-pointer', text: text.slice(selection.s, selection.e) })
     last = selection.e
   }
   result.push({ text: text.slice(last) })
@@ -19,7 +19,7 @@ function renderSelection(selections: { s: number, e: number }[], text: string) {
 const SelectText = (props: { stepAtom: PrimitiveAtom<number>, sentenceAtom: PrimitiveAtom<string>, selectionAtom: PrimitiveAtom<{s: number, e: number}[]> }) => {
   const ref = useRef<HTMLParagraphElement>(null)
   const sentence = useAtomValue(props.sentenceAtom)
-  const updateStep = useSetAtom(props.stepAtom)
+  const [step, updateStep] = useAtom(props.stepAtom)
   const [selections, updateSelections] = useAtom(props.selectionAtom)
 
   // get children nodes offset
@@ -80,10 +80,10 @@ const SelectText = (props: { stepAtom: PrimitiveAtom<number>, sentenceAtom: Prim
 
   return (
     <>
-      <label className="relative block overflow-hidden border-b-2 border-transparent bg-transparent">
-        <p ref={ref} className="w-full border-none bg-transparent p-0 text-xl font-medium font-serif cursor-text" onMouseUp={onMouseUpHandler}>
+      <label className={`absolute w-full block overflow-hidden border-b-2 border-transparent bg-transparent ${step === 1 ? 'z-10' : 'z-20'}`}>
+        <p ref={ref} className={`w-full border-none bg-transparent p-0 text-xl font-medium font-serif cursor-text transition duration-500 ${step === 1 ? 'text-gray-400 opacity-100' : 'text-primary opacity-0' }`} onMouseUp={onMouseUpHandler}>
           {renderSelection(selections, sentence).map((item, index) => (
-            <span className={item.class} key={index}>{item.text}</span>
+            <span className={item.class || '' + ' whitespace-pre-wrap'} key={index}>{item.text}</span>
           ))}
         </p>
       </label>
