@@ -29,6 +29,7 @@
 
     20% {
       transform: translate(2px, -2px);
+      @apply bg-red-500
     }
 
     30% {
@@ -41,7 +42,6 @@
 
     50% {
       transform: translate(-2px, -2px);
-      @apply bg-red-500
     }
 
     60% {
@@ -54,6 +54,7 @@
 
     80% {
       transform: translate(-2px, -2px);
+      @apply bg-red-500
     }
 
     90% {

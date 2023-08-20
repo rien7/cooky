@@ -1,13 +1,14 @@
 import autosize from "autosize";
 import { useEffect, useRef } from "react";
-import { PrimitiveAtom, useAtom } from 'jotai'
+import { PrimitiveAtom, useAtom, useSetAtom } from 'jotai'
 import stepCheck from "../utils/stepCheck";
 
-const SentenceInput = (props: { stepAtom: PrimitiveAtom<number>, sentenceAtom: PrimitiveAtom<string> }) => {
+const SentenceInput = (props: { stepAtom: PrimitiveAtom<number>, sentenceAtom: PrimitiveAtom<string>, getErrorAtom: PrimitiveAtom<boolean> }) => {
   const ref = useRef<HTMLTextAreaElement>(null);
   const placeholder = "Input your words"
   const [sentence, updateSentence] = useAtom(props.sentenceAtom)
   const [step, updateStep] = useAtom(props.stepAtom)
+  const updateGetErrorAtom = useSetAtom(props.getErrorAtom)
 
   useEffect(() => {
     autosize(ref.current!);
@@ -21,6 +22,8 @@ const SentenceInput = (props: { stepAtom: PrimitiveAtom<number>, sentenceAtom: P
       updateSentence(e.target.value)
       if (stepCheck(step, sentence)) {
         updateStep(1)
+      } else {
+        updateGetErrorAtom(true)
       }
     }
   }
