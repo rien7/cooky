@@ -1,6 +1,7 @@
 import autosize from "autosize";
 import { useEffect, useRef } from "react";
 import { PrimitiveAtom, useAtom } from 'jotai'
+import stepCheck from "../utils/stepCheck";
 
 const SentenceInput = (props: { stepAtom: PrimitiveAtom<number>, sentenceAtom: PrimitiveAtom<string> }) => {
   const ref = useRef<HTMLTextAreaElement>(null);
@@ -13,11 +14,14 @@ const SentenceInput = (props: { stepAtom: PrimitiveAtom<number>, sentenceAtom: P
   }, [])
 
   function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    updateSentence(e.target.value)
     if (e.target.value.endsWith("\n")) {
       e.target.value = e.target.value.slice(0, -1)
       autosize.update(ref.current!)
       updateSentence(e.target.value)
-      updateStep(1)
+      if (stepCheck(step, sentence)) {
+        updateStep(1)
+      }
     }
   }
 

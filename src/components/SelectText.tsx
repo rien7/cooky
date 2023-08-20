@@ -19,7 +19,7 @@ function renderSelection(selections: { s: number, e: number }[], text: string) {
 const SelectText = (props: { stepAtom: PrimitiveAtom<number>, sentenceAtom: PrimitiveAtom<string>, selectionAtom: PrimitiveAtom<{s: number, e: number}[]> }) => {
   const ref = useRef<HTMLParagraphElement>(null)
   const sentence = useAtomValue(props.sentenceAtom)
-  const [step, updateStep] = useAtom(props.stepAtom)
+  const step = useAtomValue(props.stepAtom)
   const [selections, updateSelections] = useAtom(props.selectionAtom)
 
   // get children nodes offset
