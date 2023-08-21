@@ -17,6 +17,12 @@
       scale: 80%
     }
   }
+  ::selection {
+    @apply bg-orange-200
+  }
+  .selection ::selection {
+    @apply text-orange-400 bg-transparent
+  }
   @keyframes vibrate {
     0% {
       transform: translate(0);
