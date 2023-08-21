@@ -1,17 +1,21 @@
 import { PrimitiveAtom, useAtomValue, useAtom } from 'jotai'
 import { useRef } from 'react'
+import renderSelection from '../utils/renderSelection'
 
-function renderSelection(selections: { s: number, e: number }[], text: string) {
-  const result: { class?: string, text: string }[] = []
-  let last = 0
+function mergeSelection(selections: {s: number, e: number}[]): {s: number, e: number}[] {
   selections.sort((a, b) => a.s - b.s)
-  for (const selection of selections) {
-    result.push({ text: text.slice(last, selection.s) })
-    result.push({ class: 'text-orange-400 cursor-pointer', text: text.slice(selection.s, selection.e) })
-    last = selection.e
+  const merged: {s: number, e: number}[] = []
+  let last = selections[0]
+  for (let i = 1; i < selections.length; i++) {
+    if (selections[i].s <= last.e) {
+      last.e = Math.max(last.e, selections[i].e)
+    } else {
+      merged.push(last)
+      last = selections[i]
+    }
   }
-  result.push({ text: text.slice(last) })
-  return result
+  merged.push(last)
+  return merged
 }
 
 // TODO: support phrase selection
@@ -75,15 +79,16 @@ const SelectText = (props: { stepAtom: PrimitiveAtom<number>, sentenceAtom: Prim
     const selectionStart = forward ? anchorOffset + anchorNodeOffset : focusOffset + focusNodeOffset;
     const selectionEnd = selectionStart + selection.length;
 
-    updateSelections([...selections, { s: selectionStart, e: selectionEnd }])
+    const mergedSelections = mergeSelection([...selections, { s: selectionStart, e: selectionEnd }])
+    updateSelections(mergedSelections)
   }
 
   return (
     <>
       <label className={`absolute w-full block overflow-hidden border-transparent bg-transparent ${step === 1 ? 'z-10' : 'z-20'} -translate-y-[50%]`}>
-        <p ref={ref} className={`w-full border-none bg-transparent p-0 text-xl font-medium font-serif cursor-text transition duration-500 ${step === 1 ? 'text-gray-400 opacity-100' : 'text-primary dark:text-alabaster opacity-0' }`} onMouseUp={onMouseUpHandler}>
-          {renderSelection(selections, sentence).map((item, index) => (
-            <span className={item.class || '' + ' whitespace-pre-wrap'} key={index}>{item.text}</span>
+        <p ref={ref} className={`selection w-full border-none bg-transparent p-0 text-xl font-medium font-serif cursor-text transition duration-500 ${step === 1 ? 'text-gray-400 opacity-100' : 'text-primary dark:text-alabaster opacity-0' }`} onMouseUp={onMouseUpHandler}>
+          {renderSelection(selections, sentence, { default: 'whitespace-pre-wrap', highlight: 'text-orange-400 cursor-pointer whitespace-pre-wrap' }).map((item, index) => (
+            <span className={item.class} key={index}>{item.text}</span>
           ))}
         </p>
       </label>
