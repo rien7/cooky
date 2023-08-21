@@ -85,7 +85,7 @@ const SelectText = (props: { stepAtom: PrimitiveAtom<number>, sentenceAtom: Prim
 
   return (
     <>
-      <label className={`absolute w-full block overflow-hidden border-transparent bg-transparent ${step === 1 ? 'z-10' : 'z-20'} -translate-y-[50%]`}>
+      <label className={`absolute w-[80%] max-w-7xl block overflow-hidden border-transparent bg-transparent ${step === 1 ? 'z-10' : 'z-20'} -translate-y-[50%]`}>
         <p ref={ref} className={`selection w-full border-none bg-transparent p-0 text-xl font-medium font-serif cursor-text transition duration-500 ${step === 1 ? 'text-gray-400 opacity-100' : 'text-primary dark:text-alabaster opacity-0' }`} onMouseUp={onMouseUpHandler}>
           {renderSelection(selections, sentence, { default: 'whitespace-pre-wrap', highlight: 'text-orange-400 cursor-pointer whitespace-pre-wrap' }).map((item, index) => (
             <span className={item.class} key={index}>{item.text}</span>

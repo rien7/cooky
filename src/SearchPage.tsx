@@ -5,16 +5,18 @@ import SelectText from './components/SelectText';
 import useDelayUnmount from './utils/delayUnmount';
 import { useEffect, useState } from 'react';
 import stepCheck, { useShowErrorDot } from './utils/stepCheck';
+import ResultPresent from './components/ResultPresent';
 
 const stepAtom = atom(0)
 const sentenceAtom = atom("")
 const selectionAtom = atom<{s: number, e: number}[]>([])
+const resultAtom = atom("")
 const getErrorAtom = atom(false)
 
 const SearchPage = () => {
   const step = useAtomValue(stepAtom);
-  const step1Render = useDelayUnmount(step === 0, 500)
-  const step2Render = useDelayUnmount(step === 1, 500)
+  const step0Render = useDelayUnmount(step === 0, 500)
+  const step1Render = useDelayUnmount(step === 1, 500)
   const sentence = useAtomValue(sentenceAtom)
   const updateSelectionAtom = useSetAtom(selectionAtom)
 
@@ -25,9 +27,10 @@ const SearchPage = () => {
   return (
     <>
       <div className={`flex flex-col h-screen justify-center items-center bg-alabaster dark:bg-primary`}>
-        <div className='mx-10 w-[80%] absolute'>
-          {step1Render && <SentenceInput stepAtom={stepAtom} sentenceAtom={sentenceAtom} getErrorAtom={getErrorAtom}/>}
-          {step2Render && <SelectText stepAtom={stepAtom} sentenceAtom={sentenceAtom} selectionAtom={selectionAtom}/>}
+        <div className='max-w-7xl w-[80%] transition-all'>
+          {step0Render && <SentenceInput stepAtom={stepAtom} sentenceAtom={sentenceAtom} getErrorAtom={getErrorAtom}/>}
+          {step1Render && <SelectText stepAtom={stepAtom} sentenceAtom={sentenceAtom} selectionAtom={selectionAtom}/>}
+          {step === 2 && <ResultPresent sentenceAtom={sentenceAtom} selectionAtom={selectionAtom} resultAtom={resultAtom}/>}
         </div>
       </div>
       <div className={`absolute w-48 bottom-32 left-[50%] ${step === 1 ? '-translate-x-[50%]' : step === 2 ? '-translate-x-[calc(100%-1.75rem)]' : '-translate-x-[1.75rem]'} transition`}>
