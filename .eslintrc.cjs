@@ -5,8 +5,10 @@ module.exports = {
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:react-hooks/recommended',
+    'plugin:tailwindcss/recommended',
+    "@antfu"
   ],
-  ignorePatterns: ['dist', '.eslintrc.cjs'],
+  ignorePatterns: ['dist', '.eslintrc.cjs', '.vscode/*', 'package.json', 'tailwind.config.js'],
   parser: '@typescript-eslint/parser',
   plugins: ['react-refresh'],
   rules: {
@@ -14,5 +16,6 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
+    'tailwindcss/no-custom-classname': 'off',
   },
 }

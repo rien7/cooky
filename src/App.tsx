@@ -1,7 +1,7 @@
 import { atom, useAtom } from 'jotai'
 import './index.css'
-import SearchPage from './SearchPage'
 import { useEffect } from 'react'
+import SearchPage from './SearchPage'
 
 const darkModeAtom = atom(false)
 
@@ -10,12 +10,11 @@ function App() {
 
   useEffect(() => {
     window.matchMedia('(prefers-color-scheme: dark)')
-      .addEventListener('change', event => {
-        if (event.matches) {
+      .addEventListener('change', (event) => {
+        if (event.matches)
           updateDarkMode(true)
-        } else {
+        else
           updateDarkMode(false)
-        }
       })
   }, [updateDarkMode])
 
