@@ -32,7 +32,7 @@ function SearchPage() {
           {step === 2 && <ResultPresent sentenceAtom={sentenceAtom} selectionAtom={selectionAtom} resultAtom={resultAtom}/>}
         </div>
       </div>
-      <div className={`absolute bottom-32 left-[50%] w-48 ${step === 1 ? 'translate-x-[-50%]' : step === 2 ? 'translate-x-[-calc(100%-1.75rem)]' : 'translate-x-[-1.75rem]'} transition`}>
+      <div className={`absolute bottom-32 left-[50%] w-48 ${step === 1 ? 'translate-x-[-50%]' : step === 2 ? 'translate-x-[calc(-100%+1.75rem)]' : 'translate-x-[-1.75rem]'} transition`}>
         <div className='relative after:absolute after:inset-x-0 after:top-1/2 after:block after:h-0.5 after:-translate-y-1/2 after:rounded-lg after:bg-platinum dark:after:bg-secondary'>
           <div className={`absolute top-1/2 z-10 h-1 w-4 -translate-y-1/2 bg-orange-400 duration-500 ${step === 1 ? 'left-[5.5rem]' : step === 2 ? 'left-[10.75rem]' : 'left-[0.25rem]'} transition-[left]`}/>
           <div className='relative z-10 flex items-center justify-between'>
