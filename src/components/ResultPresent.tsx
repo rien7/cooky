@@ -4,7 +4,7 @@ import { useEffect } from 'react'
 import renderSelection from '../utils/renderSelection'
 
 function ResultPresent(props: { sentenceAtom: PrimitiveAtom<string>; selectionAtom: PrimitiveAtom<{ s: number; e: number }[]>; resultAtom: PrimitiveAtom<string> }) {
-  const [result, updateResult] = useAtom(props.resultAtom)
+  const [result, setResult] = useAtom(props.resultAtom)
 
   useEffect(() => {
     const data = ''
@@ -13,14 +13,14 @@ function ResultPresent(props: { sentenceAtom: PrimitiveAtom<string>; selectionAt
 
     for (const c of data) {
       timeoutIds.push(setTimeout(() => {
-        updateResult(result => result + c)
+        setResult(result => result + c)
       }, 5000 + 50 * timeoutIds.length))
     }
 
     return () => {
       timeoutIds.map(id => clearTimeout(id))
     }
-  }, [updateResult])
+  }, [setResult])
 
   return (
     <>

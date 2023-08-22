@@ -26,7 +26,7 @@ function SelectText(props: { stepAtom: PrimitiveAtom<number>; sentenceAtom: Prim
   const ref = useRef<HTMLParagraphElement>(null)
   const sentence = useAtomValue(props.sentenceAtom)
   const step = useAtomValue(props.stepAtom)
-  const [selections, updateSelections] = useAtom(props.selectionAtom)
+  const [selections, setSelections] = useAtom(props.selectionAtom)
 
   // get children nodes offset
   function getOffset() {
@@ -65,7 +65,7 @@ function SelectText(props: { stepAtom: PrimitiveAtom<number>; sentenceAtom: Prim
       const offset = offsets.get(anchorNode.textContent) || 0
       for (const item of selections) {
         if (item.s <= anchorOffset + offset && anchorOffset + offset <= item.e) {
-          updateSelections(selections.filter(i => i !== item))
+          setSelections(selections.filter(i => i !== item))
           return
         }
       }
@@ -87,7 +87,7 @@ function SelectText(props: { stepAtom: PrimitiveAtom<number>; sentenceAtom: Prim
     const selectionEnd = selectionStart + selection.length
 
     const mergedSelections = mergeSelection([...selections, { s: selectionStart, e: selectionEnd }])
-    updateSelections(mergedSelections)
+    setSelections(mergedSelections)
   }
 
   return (

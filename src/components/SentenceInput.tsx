@@ -7,24 +7,24 @@ import stepCheck from '../utils/stepCheck'
 function SentenceInput(props: { stepAtom: PrimitiveAtom<number>; sentenceAtom: PrimitiveAtom<string>; getErrorAtom: PrimitiveAtom<boolean> }) {
   const ref = useRef<HTMLTextAreaElement>(null)
   const placeholder = 'Input your words'
-  const [sentence, updateSentence] = useAtom(props.sentenceAtom)
-  const [step, updateStep] = useAtom(props.stepAtom)
-  const updateGetErrorAtom = useSetAtom(props.getErrorAtom)
+  const [sentence, setSentence] = useAtom(props.sentenceAtom)
+  const [step, setStep] = useAtom(props.stepAtom)
+  const setGetErrorAtom = useSetAtom(props.getErrorAtom)
 
   useEffect(() => {
     autosize(ref.current!)
   }, [])
 
   function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
-    updateSentence(e.target.value)
+    setSentence(e.target.value)
     if (e.target.value.endsWith('\n')) {
       e.target.value = e.target.value.slice(0, -1)
       autosize.update(ref.current!)
-      updateSentence(e.target.value)
+      setSentence(e.target.value)
       if (stepCheck(step, sentence))
-        updateStep(1)
+        setStep(1)
       else
-        updateGetErrorAtom(true)
+        setGetErrorAtom(true)
     }
   }
 

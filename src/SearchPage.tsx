@@ -17,11 +17,11 @@ function SearchPage() {
   const step0Render = useDelayUnmount(step === 0, 500)
   const step1Render = useDelayUnmount(step === 1, 500)
   const sentence = useAtomValue(sentenceAtom)
-  const updateSelectionAtom = useSetAtom(selectionAtom)
+  const setSelectionAtom = useSetAtom(selectionAtom)
 
   useEffect(() => {
-    updateSelectionAtom([])
-  }, [sentence, updateSelectionAtom])
+    setSelectionAtom([])
+  }, [sentence, setSelectionAtom])
 
   return (
     <>
@@ -48,18 +48,18 @@ function Dot(props: { number: number }) {
   const [step, setStep] = useAtom(stepAtom)
   const sentence = useAtomValue(sentenceAtom)
   const selection = useAtomValue(selectionAtom)
-  const [clickAble, updateClickAble] = useState(false)
-  const updateShowErrorDot = useSetAtom(getErrorAtom)
+  const [clickAble, setClickAble] = useState(false)
+  const setShowErrorDot = useSetAtom(getErrorAtom)
   const errorDotRender = useShowErrorDot(getErrorAtom, 500)
 
   useEffect(() => {
-    updateClickAble(((step === props.number || step + 1 === props.number) && stepCheck(step, sentence, selection)) || (props.number < step && props.number === 0))
-  }, [step, sentence, selection, updateClickAble, props.number, clickAble])
+    setClickAble(((step === props.number || step + 1 === props.number) && stepCheck(step, sentence, selection)) || (props.number < step && props.number === 0))
+  }, [step, sentence, selection, setClickAble, props.number, clickAble])
 
   return (
     <>
       {!(errorDotRender && step === props.number)
-        ? <div className={`group flex h-14 items-center bg-alabaster p-2 dark:bg-primary ${clickAble ? 'cursor-pointer' : ''}`} onClick={() => clickAble ? setStep(props.number === step ? props.number + 1 : props.number) : updateShowErrorDot(true)}>
+        ? <div className={`group flex h-14 items-center bg-alabaster p-2 dark:bg-primary ${clickAble ? 'cursor-pointer' : ''}`} onClick={() => clickAble ? setStep(props.number === step ? props.number + 1 : props.number) : setShowErrorDot(true)}>
           <div className={`${props.number === step ? ('h-10 w-10 animate-[scale-80_2s_ease-in-out_infinite_alternate] bg-orange-400 outline-orange-400') : 'h-2 w-2 bg-sliver outline-sliver'}
           ${clickAble ? 'running group-hover:outline group-hover:outline-2 group-hover:outline-offset-2' : 'paused'} rounded-full transition-all`} />
         </div>

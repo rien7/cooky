@@ -1,20 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState } from 'react'
 
 export default function useDelayUnmount(isMounted: boolean, delayTime: number) {
-  const [ shouldRender, setShouldRender ] = useState(false);
+  const [shouldRender, setShouldRender] = useState(false)
 
   useEffect(() => {
-    let timeoutId: number;
+    let timeoutId: number
     if (isMounted && !shouldRender) {
-      setShouldRender(true);
+      setShouldRender(true)
     }
-    else if(!isMounted && shouldRender) {
+    else if (!isMounted && shouldRender) {
       timeoutId = setTimeout(
-        () => setShouldRender(false), 
-        delayTime
-      );
+        () => setShouldRender(false),
+        delayTime,
+      )
     }
-    return () => clearTimeout(timeoutId);
-  }, [isMounted, delayTime, shouldRender]);
-  return shouldRender;
+    return () => clearTimeout(timeoutId)
+  }, [isMounted, delayTime, shouldRender])
+  return shouldRender
 }

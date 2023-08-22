@@ -6,17 +6,17 @@ import SearchPage from './SearchPage'
 const darkModeAtom = atom(false)
 
 function App() {
-  const [darkMode, updateDarkMode] = useAtom(darkModeAtom)
+  const [darkMode, setDarkMode] = useAtom(darkModeAtom)
 
   useEffect(() => {
     window.matchMedia('(prefers-color-scheme: dark)')
       .addEventListener('change', (event) => {
         if (event.matches)
-          updateDarkMode(true)
+          setDarkMode(true)
         else
-          updateDarkMode(false)
+          setDarkMode(false)
       })
-  }, [updateDarkMode])
+  }, [setDarkMode])
 
   return (
     <div className={darkMode ? 'dark' : undefined}>
