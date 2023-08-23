@@ -2,18 +2,22 @@ import autosize from 'autosize'
 import { useEffect, useRef } from 'react'
 import type { PrimitiveAtom } from 'jotai'
 import { useAtom, useSetAtom } from 'jotai'
-import stepCheck from '../utils/stepCheck'
 
-function SentenceInput(props: { stepAtom: PrimitiveAtom<number>; sentenceAtom: PrimitiveAtom<string>; getErrorAtom: PrimitiveAtom<boolean> }) {
+function SentenceInput(props: { stepAtom: PrimitiveAtom<number>; sentenceAtom: PrimitiveAtom<string>; selectionAtom: PrimitiveAtom<{ s: number; e: number }[]>; errorClickAtom: PrimitiveAtom<boolean> }) {
   const ref = useRef<HTMLTextAreaElement>(null)
   const placeholder = 'Input your words'
   const [sentence, setSentence] = useAtom(props.sentenceAtom)
   const [step, setStep] = useAtom(props.stepAtom)
-  const setGetErrorAtom = useSetAtom(props.getErrorAtom)
+  const setSelections = useSetAtom(props.selectionAtom)
+  const setErrorClick = useSetAtom(props.errorClickAtom)
 
   useEffect(() => {
     autosize(ref.current!)
   }, [])
+
+  useEffect(() => {
+    setSelections([])
+  }, [setSelections])
 
   function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     setSentence(e.target.value)
@@ -21,10 +25,10 @@ function SentenceInput(props: { stepAtom: PrimitiveAtom<number>; sentenceAtom: P
       e.target.value = e.target.value.slice(0, -1)
       autosize.update(ref.current!)
       setSentence(e.target.value)
-      if (stepCheck(step, sentence))
+      if (sentence.length !== 0)
         setStep(1)
       else
-        setGetErrorAtom(true)
+        setErrorClick(true)
     }
   }
 

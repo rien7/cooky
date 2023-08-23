@@ -1,33 +1,29 @@
 import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
-import { useEffect, useState } from 'react'
+import { oneLine } from 'common-tags'
 import SentenceInput from './components/SentenceInput'
 import SelectText from './components/SelectText'
 import useDelayUnmount from './utils/delayUnmount'
-import stepCheck, { useShowErrorDot } from './utils/stepCheck'
+import { useShowErrorDot } from './utils/useShowErrorDot'
 import ResultPresent from './components/ResultPresent'
 
 const stepAtom = atom(0)
 const sentenceAtom = atom('')
+const sentenceErrorAtom = atom(get => get(sentenceAtom).length === 0 && get(stepAtom) === 0)
 const selectionAtom = atom<{ s: number; e: number }[]>([])
+const selectionErrorAtom = atom(get => get(selectionAtom).length === 0 && get(stepAtom) === 1)
 const resultAtom = atom('')
-const getErrorAtom = atom(false)
+const errorClickAtom = atom(false)
 
 function SearchPage() {
   const step = useAtomValue(stepAtom)
   const step0Render = useDelayUnmount(step === 0, 500)
   const step1Render = useDelayUnmount(step === 1, 500)
-  const sentence = useAtomValue(sentenceAtom)
-  const setSelectionAtom = useSetAtom(selectionAtom)
-
-  useEffect(() => {
-    setSelectionAtom([])
-  }, [sentence, setSelectionAtom])
 
   return (
     <>
       <div className={'flex h-screen flex-col items-center justify-center bg-alabaster dark:bg-primary'}>
         <div className='w-[80%] max-w-7xl transition-all'>
-          {step0Render && <SentenceInput stepAtom={stepAtom} sentenceAtom={sentenceAtom} getErrorAtom={getErrorAtom}/>}
+          {step0Render && <SentenceInput stepAtom={stepAtom} sentenceAtom={sentenceAtom} selectionAtom={selectionAtom} errorClickAtom={errorClickAtom}/>}
           {step1Render && <SelectText stepAtom={stepAtom} sentenceAtom={sentenceAtom} selectionAtom={selectionAtom}/>}
           {step === 2 && <ResultPresent sentenceAtom={sentenceAtom} selectionAtom={selectionAtom} resultAtom={resultAtom}/>}
         </div>
@@ -36,7 +32,7 @@ function SearchPage() {
         <div className='relative after:absolute after:inset-x-0 after:top-1/2 after:block after:h-0.5 after:-translate-y-1/2 after:rounded-lg after:bg-platinum dark:after:bg-secondary'>
           <div className={`absolute top-1/2 z-10 h-1 w-4 -translate-y-1/2 bg-orange-400 duration-500 ${step === 1 ? 'left-[5.5rem]' : step === 2 ? 'left-[10.75rem]' : 'left-[0.25rem]'} transition-[left]`}/>
           <div className='relative z-10 flex items-center justify-between'>
-            {[0, 1, 2].map(i => <Dot key={i} number={i}/>)}
+            {[0, 1, 2].map(i => step === i ? <HighlightDot key={i}/> : <Dot key={i} i={i}/>)}
           </div>
         </div>
       </div>
@@ -44,26 +40,55 @@ function SearchPage() {
   )
 }
 
-function Dot(props: { number: number }) {
+function Dot(props: { i: number }) {
   const [step, setStep] = useAtom(stepAtom)
-  const sentence = useAtomValue(sentenceAtom)
-  const selection = useAtomValue(selectionAtom)
-  const [clickAble, setClickAble] = useState(false)
-  const setShowErrorDot = useSetAtom(getErrorAtom)
-  const errorDotRender = useShowErrorDot(getErrorAtom, 500)
+  const sentenceError = useAtomValue(sentenceErrorAtom)
+  const selectionError = useAtomValue(selectionErrorAtom)
+  const setErrorClick = useSetAtom(errorClickAtom)
 
-  useEffect(() => {
-    setClickAble(((step === props.number || step + 1 === props.number) && stepCheck(step, sentence, selection)) || (props.number < step && props.number === 0))
-  }, [step, sentence, selection, setClickAble, props.number, clickAble])
+  const stepClickable = props.i === 0 || (props.i === 1 && step === 0) || (props.i === 2 && step === 1)
+
+  function handleClick() {
+    if (stepClickable && ((step === 0 && !sentenceError) || (step === 1 && !selectionError) || (props.i < step)))
+      setStep(props.i)
+    else if (props.i > step)
+      setErrorClick(true)
+  }
 
   return (
     <>
-      {!(errorDotRender && step === props.number)
-        ? <div className={`group flex h-14 items-center bg-alabaster p-2 dark:bg-primary ${clickAble ? 'cursor-pointer' : ''}`} onClick={() => clickAble ? setStep(props.number === step ? props.number + 1 : props.number) : setShowErrorDot(true)}>
-          <div className={`${props.number === step ? ('h-10 w-10 animate-[scale-80_2s_ease-in-out_infinite_alternate] bg-orange-400 outline-orange-400') : 'h-2 w-2 bg-sliver outline-sliver'}
-          ${clickAble ? 'running group-hover:outline group-hover:outline-2 group-hover:outline-offset-2' : 'paused'} rounded-full transition-all`} />
+      <div className={`group flex h-14 items-center bg-alabaster p-2 dark:bg-primary ${stepClickable ? 'cursor-pointer' : ''}`} onClick={handleClick}>
+        <div className={`h-2 w-2 rounded-full bg-sliver outline-sliver transition-all ${stepClickable ? 'group-hover:outline group-hover:outline-2 group-hover:outline-offset-2' : ''}`} />
+      </div>
+    </>
+  )
+}
+
+function HighlightDot() {
+  const [step, setStep] = useAtom(stepAtom)
+  const sentenceError = useAtomValue(sentenceErrorAtom)
+  const selectionError = useAtomValue(selectionErrorAtom)
+  const setErrorClick = useSetAtom(errorClickAtom)
+  const errorDotRender = useShowErrorDot(errorClickAtom, 500)
+
+  function handleClick() {
+    if (step === 0 && !sentenceError)
+      setStep(1)
+    else if (step === 1 && !selectionError)
+      setStep(2)
+    else
+      setErrorClick(true)
+  }
+
+  return (
+    <>
+      {!errorDotRender
+        ? <div className={'group flex h-14 cursor-pointer items-center bg-alabaster p-2 dark:bg-primary'} onClick={handleClick}>
+          <div className={oneLine`h-10 w-10 animate-[scale-80_2s_ease-in-out_infinite_alternate] bg-orange-400 outline-orange-400 rounded-full transition-all group-hover:outline group-hover:outline-2 group-hover:outline-offset-2
+          ${(!sentenceError && !selectionError && step !== 2) ? 'running' : 'paused'}`} />
         </div>
-        : <ErrorDot />}
+        : <ErrorDot />
+      }
     </>
   )
 }
