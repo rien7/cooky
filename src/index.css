@@ -73,3 +73,25 @@
     }
   }
 }
+
+.level-0-title {
+  @apply bg-blue-500 text-blue-300
+}
+.level-0-msg {
+  @apply bg-blue-300 text-blue-500
+}
+.level-1-title {
+  @apply bg-yellow-500 text-yellow-300
+}
+.level-1-msg {
+  @apply bg-yellow-300 text-yellow-500
+}
+.level-2-title {
+  @apply bg-red-500 text-red-300
+}
+.level-2-msg {
+  @apply bg-red-300 text-red-500
+}
+circle {
+  transition: stroke-dashoffset 1s linear;
+}
