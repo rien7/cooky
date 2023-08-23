@@ -13,7 +13,7 @@ function setApiKey(key: string) {
 }
 
 async function postError(title?: string, message?: string) {
-  const id = Math.random().toString(36).slice(2)
+  const id = Math.random().toString(36)
   window.postMessage({
     type: messageType.notification,
     msg: {

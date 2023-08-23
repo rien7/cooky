@@ -1,14 +1,13 @@
 import { setApiKey } from '../../utils/openai'
 import { getPromiseMap } from './notificationCallback'
 
-function OpenAIKeyInput(props: { id?: string }) {
+function OpenAIKeyInput(props: { id: string }) {
   const openAIKey = localStorage.getItem('openAIKey') || ''
   function handleKeyUp(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
       setApiKey(e.currentTarget.value)
       localStorage.setItem('openAIKey', e.currentTarget.value)
-      if (props.id)
-        getPromiseMap(props.id)?.resolve('')
+      getPromiseMap(props.id)?.resolve('')
     }
   }
 
