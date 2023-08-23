@@ -1,14 +1,15 @@
 import { atom, useAtom } from 'jotai'
 import './index.css'
-import { useEffect } from 'react'
+import { useEffectOnce } from 'usehooks-ts'
 import SearchPage from './SearchPage'
+import NotificationCenter from './components/notification/NotificationCenter'
 
 const darkModeAtom = atom(false)
 
 function App() {
   const [darkMode, setDarkMode] = useAtom(darkModeAtom)
 
-  useEffect(() => {
+  useEffectOnce(() => {
     window.matchMedia('(prefers-color-scheme: dark)')
       .addEventListener('change', (event) => {
         if (event.matches)
@@ -16,11 +17,12 @@ function App() {
         else
           setDarkMode(false)
       })
-  }, [setDarkMode])
+  })
 
   return (
     <div className={darkMode ? 'dark' : undefined}>
       <SearchPage />
+      <NotificationCenter />
     </div>
   )
 }

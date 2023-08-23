@@ -1,23 +1,19 @@
 import autosize from 'autosize'
-import { useEffect, useRef } from 'react'
-import type { PrimitiveAtom } from 'jotai'
+import { useRef } from 'react'
 import { useAtom, useSetAtom } from 'jotai'
+import { useEffectOnce } from 'usehooks-ts'
+import { errorClickAtom, sentenceAtom, stepAtom } from '../utils/atoms'
 
-function SentenceInput(props: { stepAtom: PrimitiveAtom<number>; sentenceAtom: PrimitiveAtom<string>; selectionAtom: PrimitiveAtom<{ s: number; e: number }[]>; errorClickAtom: PrimitiveAtom<boolean> }) {
+function SentenceInput() {
   const ref = useRef<HTMLTextAreaElement>(null)
   const placeholder = 'Input your words'
-  const [sentence, setSentence] = useAtom(props.sentenceAtom)
-  const [step, setStep] = useAtom(props.stepAtom)
-  const setSelections = useSetAtom(props.selectionAtom)
-  const setErrorClick = useSetAtom(props.errorClickAtom)
+  const [sentence, setSentence] = useAtom(sentenceAtom)
+  const [step, setStep] = useAtom(stepAtom)
+  const setErrorClick = useSetAtom(errorClickAtom)
 
-  useEffect(() => {
+  useEffectOnce(() => {
     autosize(ref.current!)
-  }, [])
-
-  useEffect(() => {
-    setSelections([])
-  }, [setSelections])
+  })
 
   function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
     setSentence(e.target.value)

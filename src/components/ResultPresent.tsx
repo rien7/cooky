@@ -1,23 +1,53 @@
-import type { PrimitiveAtom } from 'jotai'
 import { useAtom, useAtomValue } from 'jotai'
-import { useEffect, useState } from 'react'
+import { useState } from 'react'
+import { useEffectOnce } from 'usehooks-ts'
+import OpenAI from 'openai'
 import renderSelection from '../utils/renderSelection'
-import { translate } from '../utils/openai'
+import { postError, translate } from '../utils/openai'
+import { resultAtom, selectionAtom, sentenceAtom } from '../utils/atoms'
+import { messageType, notificationLevel, notificationType } from './notification/model'
 
-function ResultPresent(props: { sentenceAtom: PrimitiveAtom<string>; selectionAtom: PrimitiveAtom<{ s: number; e: number }[]>; resultAtom: PrimitiveAtom<string> }) {
-  const sentence = useAtomValue(props.sentenceAtom)
-  const selections = useAtomValue(props.selectionAtom)
+function ResultPresent() {
+  const sentence = useAtomValue(sentenceAtom)
+  const selections = useAtomValue(selectionAtom)
   const [selectionsValue, setSelectionsValue] = useState<Map<string, string>>(new Map())
-  const [result, setResult] = useAtom(props.resultAtom)
+  const [result, setResult] = useAtom(resultAtom)
 
-  useEffect(() => {
+  useEffectOnce(() => {
     setResult('')
     setSelectionsValue(new Map())
     let buffer = ''
     let sentenceTranslated = false
     async function getResult() {
-      const stream = await translate(sentence, selections, 'English', 'Chinese')
-      for await (const part of stream) {
+      let stream
+      try {
+        stream = await translate(sentence, selections, 'English', 'Chinese')
+      }
+      catch (e) {
+        if (e instanceof OpenAI.APIError) {
+          if (e.code === 'invalid_api_key') {
+            await postError('OpenAI API key error', 'Incorrect API key provided.\nPlease check your OpenAI API key and try again.')
+            stream = await translate(sentence, selections, 'English', 'Chinese')
+          }
+          else {
+            window.postMessage({
+              type: messageType.notification,
+              msg: {
+                level: notificationLevel.error,
+                title: 'OpenAI API error',
+                message: e.message,
+                closable: true,
+                autoClosable: 10,
+                type: notificationType.other,
+              },
+            })
+          }
+        }
+        else {
+          throw e
+        }
+      }
+      for await (const part of stream!) {
         const data = part.choices[0]?.delta?.content || ''
         if (data === '❖')
           sentenceTranslated = true
@@ -43,12 +73,12 @@ function ResultPresent(props: { sentenceAtom: PrimitiveAtom<string>; selectionAt
       }
     }
     void getResult()
-  }, [setResult, selections, sentence, setSelectionsValue])
+  })
 
   return (
     <>
       <div className={`absolute w-[80%] max-w-7xl ${result ? 'top-[30%]' : 'top-[50%]'} transition-[top]`}>
-        <Sentence sentenceAtom={props.sentenceAtom} selectionAtom={props.selectionAtom} selectionsValue={selectionsValue}/>
+        <Sentence selectionsValue={selectionsValue}/>
       </div>
       { result && <div className={'absolute top-[40%] w-[80%] max-w-7xl'}>
           <Result result={result}/>
@@ -57,9 +87,9 @@ function ResultPresent(props: { sentenceAtom: PrimitiveAtom<string>; selectionAt
   )
 }
 
-function Sentence(props: { sentenceAtom: PrimitiveAtom<string>; selectionAtom: PrimitiveAtom<{ s: number; e: number }[]>; selectionsValue: Map<string, string> }) {
-  const sentence = useAtomValue(props.sentenceAtom)
-  const selections = useAtomValue(props.selectionAtom)
+function Sentence(props: { selectionsValue: Map<string, string> }) {
+  const sentence = useAtomValue(sentenceAtom)
+  const selections = useAtomValue(selectionAtom)
   return (
     <>
       <label className={'absolute z-10 block translate-y-[-50%] overflow-hidden border-transparent bg-transparent'}>

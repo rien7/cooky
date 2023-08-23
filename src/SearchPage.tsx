@@ -1,18 +1,11 @@
-import { atom, useAtom, useAtomValue, useSetAtom } from 'jotai'
+import { useAtom, useAtomValue, useSetAtom } from 'jotai'
 import { oneLine } from 'common-tags'
 import SentenceInput from './components/SentenceInput'
 import SelectText from './components/SelectText'
 import useDelayUnmount from './utils/delayUnmount'
 import { useShowErrorDot } from './utils/useShowErrorDot'
 import ResultPresent from './components/ResultPresent'
-
-const stepAtom = atom(0)
-const sentenceAtom = atom('')
-const sentenceErrorAtom = atom(get => get(sentenceAtom).length === 0 && get(stepAtom) === 0)
-const selectionAtom = atom<{ s: number; e: number }[]>([])
-const selectionErrorAtom = atom(get => get(selectionAtom).length === 0 && get(stepAtom) === 1)
-const resultAtom = atom('')
-const errorClickAtom = atom(false)
+import { errorClickAtom, selectionErrorAtom, sentenceErrorAtom, stepAtom } from './utils/atoms'
 
 function SearchPage() {
   const step = useAtomValue(stepAtom)
@@ -23,9 +16,9 @@ function SearchPage() {
     <>
       <div className={'flex h-screen flex-col items-center justify-center bg-alabaster dark:bg-primary'}>
         <div className='w-[80%] max-w-7xl transition-all'>
-          {step0Render && <SentenceInput stepAtom={stepAtom} sentenceAtom={sentenceAtom} selectionAtom={selectionAtom} errorClickAtom={errorClickAtom}/>}
-          {step1Render && <SelectText stepAtom={stepAtom} sentenceAtom={sentenceAtom} selectionAtom={selectionAtom}/>}
-          {step === 2 && <ResultPresent sentenceAtom={sentenceAtom} selectionAtom={selectionAtom} resultAtom={resultAtom}/>}
+          {step0Render && <SentenceInput />}
+          {step1Render && <SelectText />}
+          {step === 2 && <ResultPresent />}
         </div>
       </div>
       <div className={`absolute bottom-32 left-[50%] w-48 ${step === 1 ? 'translate-x-[-50%]' : step === 2 ? 'translate-x-[calc(-100%+1.75rem)]' : 'translate-x-[-1.75rem]'} transition`}>

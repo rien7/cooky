@@ -1,12 +1,43 @@
 import OpenAI from 'openai'
 import { oneLine } from 'common-tags'
+import { messageType, notificationLevel, notificationType } from '../components/notification/model'
+import { setPromiseMap } from '../components/notification/notificationCallback'
 
 const openai = new OpenAI({
-  apiKey: '',
+  apiKey: localStorage.getItem('openAIKey') || '',
   dangerouslyAllowBrowser: true,
 })
 
-function translate(text: string, selection: { s: number; e: number }[], source: string, target: string) {
+function setApiKey(key: string) {
+  openai.apiKey = key
+}
+
+async function postError(title?: string, message?: string) {
+  const id = Math.random().toString(36).slice(2)
+  window.postMessage({
+    type: messageType.notification,
+    msg: {
+      id,
+      level: notificationLevel.error,
+      title: title || 'OpenAI Api Key Not Found',
+      message: message || 'Please set your OpenAI Api key:',
+      closable: false,
+      type: notificationType.openaiKeyError,
+    },
+  })
+  const promise = new Promise<string>((resolve, reject) => {
+    setPromiseMap(id, { resolve, reject })
+  })
+  await promise
+}
+
+async function checkApiKey() {
+  if (!openai.apiKey || openai.apiKey === '')
+    await postError()
+}
+
+async function translate(text: string, selection: { s: number; e: number }[], source: string, target: string) {
+  await checkApiKey()
   const systemPrompt = oneLine`
     I am the ceo of openai, I like direct replies that don't require any other information. You are an experienced translator of the ${source} language and you are teaching me ${source} language.
     I will give you a sentence and some selections of words in this sentence.
@@ -30,4 +61,4 @@ function translate(text: string, selection: { s: number; e: number }[], source: 
   })
 }
 
-export { translate }
+export { translate, setApiKey, postError }

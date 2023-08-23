@@ -1,7 +1,8 @@
-import type { PrimitiveAtom } from 'jotai'
 import { useAtom, useAtomValue } from 'jotai'
 import { useRef } from 'react'
+import { useEffectOnce } from 'usehooks-ts'
 import renderSelection from '../utils/renderSelection'
+import { selectionAtom, sentenceAtom, stepAtom } from '../utils/atoms'
 
 function mergeSelection(selections: { s: number; e: number }[]): { s: number; e: number }[] {
   selections.sort((a, b) => a.s - b.s)
@@ -22,11 +23,15 @@ function mergeSelection(selections: { s: number; e: number }[]): { s: number; e:
 
 // TODO: support phrase selection
 // TODO: remove space and other symbols
-function SelectText(props: { stepAtom: PrimitiveAtom<number>; sentenceAtom: PrimitiveAtom<string>; selectionAtom: PrimitiveAtom<{ s: number; e: number }[]> }) {
+function SelectText() {
   const ref = useRef<HTMLParagraphElement>(null)
-  const sentence = useAtomValue(props.sentenceAtom)
-  const step = useAtomValue(props.stepAtom)
-  const [selections, setSelections] = useAtom(props.selectionAtom)
+  const sentence = useAtomValue(sentenceAtom)
+  const step = useAtomValue(stepAtom)
+  const [selections, setSelections] = useAtom(selectionAtom)
+
+  useEffectOnce(() => {
+    setSelections([])
+  })
 
   // get children nodes offset
   function getOffset() {
