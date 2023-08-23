@@ -1,6 +1,7 @@
 import { atom, useAtom } from 'jotai'
 import './index.css'
 import { useEffectOnce } from 'usehooks-ts'
+import { Analytics } from '@vercel/analytics/react'
 import SearchPage from './SearchPage'
 import NotificationCenter from './components/notification/NotificationCenter'
 
@@ -20,10 +21,13 @@ function App() {
   })
 
   return (
-    <div className={darkMode ? 'dark' : undefined}>
-      <SearchPage />
-      <NotificationCenter />
-    </div>
+    <>
+      <div className={darkMode ? 'dark' : undefined}>
+        <SearchPage />
+        <NotificationCenter />
+      </div>
+      <Analytics />
+    </>
   )
 }
 

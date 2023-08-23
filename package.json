@@ -10,6 +10,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@vercel/analytics": "^1.0.2",
     "autosize": "^6.0.1",
     "common-tags": "^1.8.2",
     "jotai": "^2.3.1",
