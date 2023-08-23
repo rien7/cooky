@@ -1,13 +1,17 @@
+import { useSetAtom } from 'jotai'
+import { deletedNotificationsAtom } from '../../utils/atoms'
 import { setApiKey } from '../../utils/openai'
 import { getPromiseMap } from './notificationCallback'
 
 function OpenAIKeyInput(props: { id: string }) {
+  const setDeletedNotification = useSetAtom(deletedNotificationsAtom)
   const openAIKey = localStorage.getItem('openAIKey') || ''
   function handleKeyUp(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === 'Enter') {
       setApiKey(e.currentTarget.value)
       localStorage.setItem('openAIKey', e.currentTarget.value)
       getPromiseMap(props.id)?.resolve('')
+      setDeletedNotification(notifications => [...notifications, props.id])
     }
   }
 

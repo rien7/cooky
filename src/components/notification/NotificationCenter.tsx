@@ -35,6 +35,7 @@ function NotificationCenter() {
       return newNotifications
     })
     setDeletedNotifications([])
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [deletedNotifications])
 
   const content: JSX.Element[] = []
