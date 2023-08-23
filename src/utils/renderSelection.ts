@@ -7,7 +7,7 @@ export default function renderSelection(selections: { s: number; e: number }[], 
     result.push({ class: style?.default, text: text.slice(last, selection.s) })
     result.push({ class: style?.highlight, text: text.slice(selection.s, selection.e) })
     if (value)
-      result.push({ class: style?.value, text: `${value}` })
+      result.push({ class: style?.value, text: ` (${value})` })
     last = selection.e
   }
   result.push({ class: style?.default, text: text.slice(last) })
