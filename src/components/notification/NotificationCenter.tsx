@@ -45,7 +45,7 @@ function NotificationCenter() {
 
   return (
     <>
-      <div className='absolute right-5 top-5 z-50 h-full w-96 max-w-[80%]'>
+      <div className='absolute right-5 top-5 z-50 w-96 max-w-[80%]'>
         {content}
       </div>
     </>
