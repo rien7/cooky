@@ -1,6 +1,6 @@
 import OpenAI from 'openai'
 import { oneLine } from 'common-tags'
-import { messageType, notificationLevel, notificationType } from '../components/notification/model'
+import { notificationData, notificationLevel, notificationType } from '../components/notification/model'
 import { setPromiseMap } from '../components/notification/notificationCallback'
 
 const openai = new OpenAI({
@@ -14,17 +14,14 @@ function setApiKey(key: string) {
 
 async function postError(title?: string, message?: string) {
   const id = Math.random().toString(36)
-  window.postMessage({
-    type: messageType.notification,
-    msg: {
-      id,
-      level: notificationLevel.error,
-      title: title || 'OpenAI Api Key Not Found',
-      message: message || 'Please set your OpenAI Api key:',
-      closable: false,
-      type: notificationType.openaiKeyError,
-    },
-  })
+  window.postMessage(notificationData(
+    notificationLevel.error,
+    title || 'OpenAI Api Key Not Found',
+    message || 'Please set your OpenAI Api key:',
+    false,
+    undefined,
+    notificationType.openaiKeyError,
+  ))
   const promise = new Promise<string>((resolve, reject) => {
     setPromiseMap(id, { resolve, reject })
   })

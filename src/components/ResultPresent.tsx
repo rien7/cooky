@@ -7,7 +7,7 @@ import renderSelection from '../utils/renderSelection'
 import { postError, translate } from '../utils/openai'
 import { resultAtom, selectionAtom, sentenceAtom } from '../utils/atoms'
 import { addData, getData } from '../utils/storage'
-import { messageType, notificationLevel, notificationType } from './notification/model'
+import { notificationData, notificationLevel } from './notification/model'
 
 function ResultPresent() {
   const sentence = useAtomValue(sentenceAtom)
@@ -42,17 +42,13 @@ function ResultPresent() {
             stream = await translate(sentence, selections, 'English', 'Chinese')
           }
           else {
-            window.postMessage({
-              type: messageType.notification,
-              msg: {
-                level: notificationLevel.error,
-                title: 'OpenAI API error',
-                message: e.message,
-                closable: true,
-                autoClosable: 10,
-                type: notificationType.other,
-              },
-            })
+            window.postMessage(notificationData(
+              notificationLevel.error,
+              'OpenAI API error',
+              e.message,
+              true,
+              10,
+            ))
           }
         }
         else {
