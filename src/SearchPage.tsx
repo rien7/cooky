@@ -14,12 +14,10 @@ function SearchPage() {
 
   return (
     <>
-      <div className={'flex h-screen flex-col items-center justify-center bg-alabaster dark:bg-primary'}>
-        <div className='w-[80%] max-w-7xl transition-all'>
-          {step0Render && <SentenceInput />}
-          {step1Render && <SelectText />}
-          {step === 2 && <ResultPresent />}
-        </div>
+      <div className='mx-auto flex h-screen w-full max-w-7xl flex-col items-center justify-center transition-all'>
+        {(step0Render) && <SentenceInput />}
+        {(!step0Render && step1Render) && <SelectText />}
+        {(!step1Render && step === 2) && <ResultPresent />}
       </div>
       <div className={`absolute bottom-32 left-[50%] w-48 ${step === 1 ? 'translate-x-[-50%]' : step === 2 ? 'translate-x-[calc(-100%+1.75rem)]' : 'translate-x-[-1.75rem]'} transition`}>
         <div className='relative after:absolute after:inset-x-0 after:top-1/2 after:block after:h-0.5 after:-translate-y-1/2 after:rounded-lg after:bg-platinum dark:after:bg-secondary'>

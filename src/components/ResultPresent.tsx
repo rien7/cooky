@@ -27,6 +27,7 @@ function ResultPresent() {
     async function getResult() {
       const cache = await getData('queryResult', id) as { id: string; result: string; model: string; selections: { s: number; e: number; t: string; v: string }[]; sentence: string } | undefined
       if (cache) {
+        setTimeout(() => {}, 1000)
         setResult(cache.result)
         setSelectionsValue(new Map(cache.selections.map(item => [`${item.s}-${item.e}`, item.v])))
         return
@@ -105,10 +106,10 @@ function ResultPresent() {
 
   return (
     <>
-      <div className={`absolute w-[80%] max-w-7xl ${result ? 'top-[30%]' : 'top-[50%]'} transition-[top]`}>
+      <div className={'relative w-[80%] max-w-7xl'}>
         <Sentence selectionsValue={selectionsValue}/>
       </div>
-      { result && <div className={'absolute top-[40%] w-[80%] max-w-7xl'}>
+      { result && <div className={'mt-12 w-[80%] max-w-7xl'}>
           <Result result={result}/>
         </div>}
     </>
@@ -120,7 +121,7 @@ function Sentence(props: { selectionsValue: Map<string, string> }) {
   const selections = useAtomValue(selectionAtom)
   return (
     <>
-      <label className={'absolute z-10 block translate-y-[-50%] overflow-hidden border-transparent bg-transparent'}>
+      <label className={'z-10 block overflow-hidden border-transparent bg-transparent'}>
         <p className={'w-full cursor-text border-none bg-transparent p-0 font-serif text-xl font-medium transition duration-500'}>
           {renderSelection(selections, sentence, {
             default: 'text-primary dark:text-alabaster whitespace-pre-wrap',

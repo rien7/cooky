@@ -97,8 +97,8 @@ function SelectText() {
 
   return (
     <>
-      <label className={`absolute block w-[80%] max-w-7xl overflow-hidden border-transparent bg-transparent ${step === 1 ? 'z-10' : 'z-20'} translate-y-[-50%]`}>
-        <p ref={ref} className={`selection w-full cursor-text border-none bg-transparent p-0 font-serif text-xl font-medium transition duration-500 ${step === 1 ? 'text-gray-400 opacity-100' : 'text-primary opacity-0 dark:text-alabaster'}`} onMouseUp={onMouseUpHandler}>
+      <label className={`relative block w-[80%] max-w-7xl overflow-hidden border-transparent bg-transparent ${step === 1 ? 'z-10' : 'z-20'}`}>
+        <p ref={ref} className={`selection w-full cursor-text border-none bg-transparent p-0 font-serif text-xl font-medium transition duration-500 ${step === 1 ? 'text-gray-400' : 'text-primary dark:text-alabaster'}`} onMouseUp={onMouseUpHandler}>
           {renderSelection(selections, sentence, { default: 'whitespace-pre-wrap', highlight: 'text-orange-400 cursor-pointer whitespace-pre-wrap' }).map((item, index) => (
             <span className={item.class} key={index}>{item.text}</span>
           ))}

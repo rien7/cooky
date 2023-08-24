@@ -22,7 +22,7 @@ function App() {
 
   return (
     <>
-      <div className={darkMode ? 'dark' : undefined}>
+      <div className={`${darkMode ? 'dark' : ''} bg-alabaster dark:bg-primary`}>
         <SearchPage />
         <NotificationCenter />
       </div>
