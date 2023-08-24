@@ -1,10 +1,12 @@
 import { useAtom, useAtomValue } from 'jotai'
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import { useEffectOnce } from 'usehooks-ts'
 import OpenAI from 'openai'
+import { Md5 } from 'ts-md5'
 import renderSelection from '../utils/renderSelection'
 import { postError, translate } from '../utils/openai'
 import { resultAtom, selectionAtom, sentenceAtom } from '../utils/atoms'
+import { addData, getData } from '../utils/storage'
 import { messageType, notificationLevel, notificationType } from './notification/model'
 
 function ResultPresent() {
@@ -12,6 +14,10 @@ function ResultPresent() {
   const selections = useAtomValue(selectionAtom)
   const [selectionsValue, setSelectionsValue] = useState<Map<string, string>>(new Map())
   const [result, setResult] = useAtom(resultAtom)
+  const model = useRef('')
+  const streamClosed = useRef(false)
+
+  const id = Md5.hashStr(`${sentence}\n${selections.map(item => `${item.s}-${item.e}`).join(',')}`)
 
   useEffectOnce(() => {
     setResult('')
@@ -19,6 +25,12 @@ function ResultPresent() {
     let buffer = ''
     let sentenceTranslated = false
     async function getResult() {
+      const cache = await getData('queryResult', id) as { id: string; result: string; model: string; selections: { s: number; e: number; t: string; v: string }[]; sentence: string } | undefined
+      if (cache) {
+        setResult(cache.result)
+        setSelectionsValue(new Map(cache.selections.map(item => [`${item.s}-${item.e}`, item.v])))
+        return
+      }
       let stream
       try {
         stream = await translate(sentence, selections, 'English', 'Chinese')
@@ -49,6 +61,7 @@ function ResultPresent() {
       }
       for await (const part of stream!) {
         const data = part.choices[0]?.delta?.content || ''
+        model.current = part.model
         if (data === '❖')
           sentenceTranslated = true
         if (!sentenceTranslated) {
@@ -71,9 +84,28 @@ function ResultPresent() {
           }
         }
       }
+      if (!streamClosed.current)
+        streamClosed.current = true
     }
     void getResult()
   })
+
+  if (streamClosed.current) {
+    const data = {
+      sentence,
+      selections: selections.map(item => ({
+        s: item.s,
+        e: item.e,
+        t: sentence.slice(item.s, item.e),
+        v: selectionsValue.get(`${item.s}-${item.e}`) || '',
+      })),
+      result,
+      model: model.current,
+    }
+
+    addData('queryResult', id, data)
+    streamClosed.current = false
+  }
 
   return (
     <>

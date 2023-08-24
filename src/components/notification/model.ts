@@ -19,7 +19,7 @@ export interface notification {
   id?: string
   level: notificationLevel
   type: notificationType
-  title?: string
+  title: string
   message: string
   autoClosable?: number
   closable: boolean
@@ -28,4 +28,27 @@ export interface notification {
 export interface message {
   type: messageType
   msg: messageValue
+}
+
+export function notificationData(
+  level: notificationLevel,
+  title: string,
+  message: string,
+  closable: boolean,
+  autoClosable?: number,
+  type?: notificationType,
+  id?: string,
+): message {
+  return {
+    type: messageType.notification,
+    msg: {
+      id: id || Math.random().toString(16),
+      level,
+      type: type || notificationType.other,
+      title,
+      message,
+      autoClosable,
+      closable,
+    },
+  }
 }
